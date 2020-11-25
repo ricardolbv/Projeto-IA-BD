@@ -90,7 +90,7 @@ ggplot(coronary, aes(x=age, fill = famhist)) +    geom_bar() +
   xlab("Idade") + ylab("Quantidade de pessoas") 
 
 # Explorando features - Doença coronaria
-boxplot(coronary$tobacco, coronary$obesity, coronary$ldl,
+boxplot(coronary$tobacco, coronary$obesity, coronary$ldl)
 
 doencaPlot <- pie(c(comDoenca, semDoenca), c("Doença Coronária","Sem doença Coronária"), border = "white", col=myPalette,
     main = "Distribuição do dataset")
