@@ -261,6 +261,3 @@ verificaDesicionTree <- function(modelo, datasetTest, posicaoClassificador){
 verificaDesicionTree(modelo, test, 10)
 verificaDesicionTree(modelo, data, 10) # Utilizando o modelo para predizer todo o data set
 verificaDesicionTree(modelo, train_reduced, 7) # Utilizando modelo para predizer o data set de treino
-
-p <- ggplot(data, aes(perimeter_worst, concave_points_worst, group=diagnosis, colour = diagnosis))
-p + geom_point()
