@@ -44,10 +44,7 @@ ggplot(coronary, aes(x=age, fill = famhist)) +    geom_bar() +
   scale_x_binned() + labs(title = "Plot de doença coronária") +
   xlab("Idade") + ylab("Quantidade de pessoas") 
 
-# Explorando features - Doença coronaria
-boxplot(coronary$tobacco, coronary$obesity, coronary$ldl)
-
-doencaPlot <- pie(c(comDoenca, semDoenca), c("Doença Coronária","Sem doença Coronária"), border = "white", col=myPalette,
+doencaPlot <- pie(c(comDoenca, semDoenca), c("Doença Coronária - 160","Sem doença Coronária - 302"), border = "white", col=myPalette,
                   main = "Distribuição do dataset")
 
 #Faixa de idade do dataset
@@ -70,7 +67,23 @@ str(data)
 
 # Ao gerar o boxplot de de distribuição de dados por todas features 
 # vimos a necessidade de normalizar os dados.
-boxplot(data) 
+coronary = filter(data, chd == 1)
+nonCoronary = filter(data, chd == 0)
+
+#Comparativo de todas 
+plot(data, col = chd)
+
+#ggplot(data = coronary, aes(x=variable, y=value)) + geom_boxplot(aes(fill=Label))
+
+boxplot(data)
+ggplot(data , aes(y= data)) + geom_boxplot() 
+#ggplot(sc, aes(y=sc)) + 
+#  geom_boxplot(aes(fill=Care))
+#+ facet_grid(. ~ data$chd)
+
+#p <- ggplot(d, aes(factor(sub.type), val)) 
+#p + geom_boxplot() + facet_grid(. ~ d.type)
+
 
 
 # ------------------------------------------2 parte - IA -----------------------------------------------------------
