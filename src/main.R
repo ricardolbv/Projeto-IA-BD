@@ -16,6 +16,7 @@ library(ggpubr)
 library(class)
 library(rpart)
 library(rpart.plot)
+library(reshape2)
 myPalette <- brewer.pal(5, "Set2") 
 
 data <- read.csv("./dataset.txt", sep =";", na.strings = c('','NA','na','N/A','n/a','NaN','nan'), header = TRUE)
@@ -38,31 +39,42 @@ semDoenca = sum(data$chd == 0) # 302 Não tiveram doença na coronaria
 coronary = filter(data, chd == 1)
 nonCoronary = filter(data, chd == 0)
 
+#Distribuição do dataset
+doencaPlot <- pie(c(comDoenca, semDoenca), c("Doença Coronária - 160","Sem doença Coronária - 302"), border = "white", col=myPalette)
+
 # Faixa de idade do dataset
-ggplot(data, aes(x=age)) +  geom_histogram(color="black", fill="white", bins = 30)+ geom_density(alpha=.2, fill="#FF6666")
+ageCoronary <- ggplot(coronary, aes(x=age)) +  
+  geom_histogram(color="black", fill="red", bins = 30, binwidth = 1)+ geom_density(fill="#FF6666") + 
+  scale_x_continuous(name = "Idade") +
+  scale_y_continuous(name = "Pessoas")
 
+ageNoncoranary <- ggplot(nonCoronary, aes(x=age)) +  
+  geom_histogram(color="black", fill="blue", bins = 30, binwidth = 1)+ geom_density(fill="#FF6666") +
+  scale_x_continuous(name = "Idade") +
+  scale_y_continuous(name = "Pessoas")
 
+ggarrange(ageCoronary, ageNoncoranary, labels = c("Faixa de idade dos doentes", "Faixa de idade dos não doentes"), nrow = 2)
+
+#Quantos dos exemplares que desenvolveram a doença possuiam historico familiar
 ggplot(coronary, aes(x=age, fill = famhist)) +    geom_bar() +
   scale_x_binned() + labs(title = "Plot de doença coronária") +
   xlab("Idade") + ylab("Quantidade de pessoas") 
 
-doencaPlot <- pie(c(comDoenca, semDoenca), c("Doença Coronária - 160","Sem doença Coronária - 302"), border = "white", col=myPalette)
+#Box plot de qm teve doença e quem não teve
+data_mt <- data[-5]
+data_mt <- melt(data_mt, id.vars = c("chd"))
+data_mt$chd <- replace(data_mt$chd, data_mt$chd == 1, "Doente")
+data_mt$chd <- replace(data_mt$chd, data_mt$chd == 0, "Não doente")
+ggplot(data_mt, aes(x=chd,y=value,fill=chd)) +
+  geom_boxplot() +
+  facet_wrap(~variable)
 
-# Explorando features - Doença coronaria
-boxplot(coronary$tobacco, coronary$obesity, coronary$ldl)
-
-doencaPlot <- pie(c(comDoenca, semDoenca), c("Doença Coronária","Sem doença Coronária"), border = "white", col=myPalette,
-                  main = "Distribuição do dataset")
-
-# Faixa de idade do dataset
-idadePlot <-ggplot(data, aes(x=age)) +  geom_histogram(color="black", fill="white")+ geom_density(alpha=.2, fill="#FF6666")
 
 # Faixa de idade que tiveram doença coronaria tendo histórico familiar
 histPlot <- ggplot(coronary, aes(x=age, fill = famhist)) + geom_bar() +
   scale_x_binned()  +
   xlab("Idade") + ylab("Quantidade de pessoas") 
 
-ggarrange(idadePlot, histPlot, labels = c("Faixa de idade do dataset", "Doença coronaria e histórico familiar"), nrow = 2)
 
 # tranformando "Present" e "Absent" em dados númericos
 data$famhist <- replace(data$famhist, data$famhist == "Present", "1") # Atribuindo Present com 1
@@ -84,22 +96,6 @@ nonCoronary = filter(data, chd == 0)
 
 #Comparativo de todas 
 plot(data, col = chd)
-
-#ggplot(data = coronary, aes(x=variable, y=value)) + geom_boxplot(aes(fill=Label))
-
-boxplot(data)
-ggplot(data , aes(y= data)) + geom_boxplot() 
-#ggplot(sc, aes(y=sc)) + 
-#  geom_boxplot(aes(fill=Care))
-#+ facet_grid(. ~ data$chd)
-
-#p <- ggplot(d, aes(factor(sub.type), val)) 
-#p + geom_boxplot() + facet_grid(. ~ d.type)
-
-
-# vimos a necessidade de normalizar os dados e que famhist e chd poderiam ser separados para uma 
-# visualização mais relevante.
-boxplot(data) 
 
 
 # separação e armazenamento das features chd e famhist
