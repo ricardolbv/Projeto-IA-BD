@@ -78,7 +78,6 @@ data[1:462,c(1,6,9,10)] <- sapply(data[1:462,c(1,6,9,10)], as.numeric)
 str(data)
 
 # Ao gerar o boxplot de de distribuição de dados por todas features 
-<<<<<<< HEAD
 # vimos a necessidade de normalizar os dados.
 coronary = filter(data, chd == 1)
 nonCoronary = filter(data, chd == 0)
@@ -97,11 +96,11 @@ ggplot(data , aes(y= data)) + geom_boxplot()
 #p <- ggplot(d, aes(factor(sub.type), val)) 
 #p + geom_boxplot() + facet_grid(. ~ d.type)
 
-=======
+
 # vimos a necessidade de normalizar os dados e que famhist e chd poderiam ser separados para uma 
 # visualização mais relevante.
 boxplot(data) 
->>>>>>> 171c655becea4dc08d100b06cbac3375b3c2a46a
+
 
 # separação e armazenamento das features chd e famhist
 chd_feature <- data[10]
