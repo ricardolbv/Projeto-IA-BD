@@ -60,16 +60,6 @@ ggplot(coronary, aes(x=age, fill = famhist)) +    geom_bar() +
   scale_x_binned() + labs(title = "Plot de doença coronária") +
   xlab("Idade") + ylab("Quantidade de pessoas") 
 
-#Box plot de qm teve doença e quem não teve
-data_mt <- data[-5]
-data_mt <- melt(data_mt, id.vars = c("chd"))
-data_mt$chd <- replace(data_mt$chd, data_mt$chd == 1, "Doente")
-data_mt$chd <- replace(data_mt$chd, data_mt$chd == 0, "Não doente")
-ggplot(data_mt, aes(x=chd,y=value,fill=chd)) +
-  geom_boxplot() +
-  facet_wrap(~variable)
-
-
 # Faixa de idade que tiveram doença coronaria tendo histórico familiar
 histPlot <- ggplot(coronary, aes(x=age, fill = famhist)) + geom_bar() +
   scale_x_binned()  +
@@ -113,7 +103,15 @@ data_scale <- as.data.frame(scale(df))
 new_df <- cbind(data_scale, famhist_feature)
 new_df <- cbind(new_df, chd_feature)
 
-boxplot(data_scale)
+#Comparando features com boxplot entre quem teve ou não a doença
+data_mt <- new_df[-9]
+data_mt <- melt(new_df, id.vars = c("chd"))
+data_mt$chd <- replace(data_mt$chd, data_mt$chd == 1, "Doente")
+data_mt$chd <- replace(data_mt$chd, data_mt$chd == 0, "Não doente")
+ggplot(data_mt, aes(x=chd,y=value,fill=chd)) +
+  geom_boxplot() +
+  facet_wrap(~variable)
+
 
 # ------------------------------------------2 parte - IA --------------------------------------------------------
 # Conjunto de treino e teste (80% 20%)
