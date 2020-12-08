@@ -1,13 +1,13 @@
 # install.packages("RColorBrewer")
 # install.packages("tidyverse")
 # install.packages("RColorBrewer")
-
+library(scales)
 library(tidyr)
 library(dplyr)
 library(dslabs)
 library(rpart.plot)
-library(tidyverse)  # data manipulation
-library(cluster)    # clustering algorithms
+library(tidyverse)  
+library(cluster)    
 library(factoextra)
 library(FactoMineR)
 library(ggplot2)
@@ -33,37 +33,50 @@ sum(is.na(data))
 # retirar coluna de identificação
 data <- data[-1]
 
-comDoenca = sum(data$chd == 1) # 160 tiveram doença na coronaria
-semDoenca = sum(data$chd == 0) # 302 Não tiveram doença na coronaria
+# Gráfico de pizza: Doentes e não doentes
+pie_dataframe <- data.frame(
+  group = c("Doente", "Não doente"),
+  value = c(sum(data$chd == 1), sum(data$chd == 0)) # 160 tiveram doença na coronária e 302 Não tiveram doença na coronária
+)
 
+ggplot(pie_dataframe, aes(x = "", y = value, fill = group)) +
+       geom_bar(width = 1, stat = "identity") +
+       coord_polar("y", start = 0) +
+       scale_fill_brewer(palette="Blues") + theme_minimal() + 
+       geom_text(aes(x = 1,label = paste(round(value / sum(value) *100,1),"%"), family = "sans"),
+                 position = position_stack(vjust = 0.5), size = 10)+
+       labs(fill = "Classificação",
+            x = NULL,
+            y = NULL,
+            title = "Pie: Doentes e não doentes") +
+            theme_bw(base_size = 20, base_family = "mono")
+             
+
+# Barplot: Quantos dos que desenvolveram a doença tinham histórico familiar por idade
+#Separando o dataset em doente e não doente
 coronary = filter(data, chd == 1)
 nonCoronary = filter(data, chd == 0)
 
-#Distribuição do dataset
-doencaPlot <- pie(c(comDoenca, semDoenca), c("Doença Coronária - 160","Sem doença Coronária - 302"), border = "white", col=myPalette)
-
 # Faixa de idade do dataset
-ageCoronary <- ggplot(coronary, aes(x=age)) +  
-  geom_histogram(color="black", fill="red", bins = 30, binwidth = 1)+ geom_density(fill="#FF6666") + 
-  scale_x_continuous(name = "Idade") +
-  scale_y_continuous(name = "Pessoas")
+ageCoronary <- ggplot(coronary, aes(x=age, fill=famhist)) +  
+  geom_histogram(color="black", bins = 30, binwidth = 1)+ geom_density(fill="#FF6666") + 
+  labs(fill = "Histórico familiar:",
+       x = "idade",
+       y = "Pessoas",
+       title = "Doentes") +
+       theme_classic(base_size = 20, base_family = "mono")
 
-ageNoncoranary <- ggplot(nonCoronary, aes(x=age)) +  
-  geom_histogram(color="black", fill="blue", bins = 30, binwidth = 1)+ geom_density(fill="#FF6666") +
-  scale_x_continuous(name = "Idade") +
-  scale_y_continuous(name = "Pessoas")
+ageNoncoranary <- ggplot(nonCoronary, aes(x=age, fill=famhist)) + 
+  geom_histogram(color="black", bins = 30, binwidth = 1)+ geom_density(fill="#FF6666") +
+  labs(fill = "Histórico familiar:",
+       x = "idade",
+       y = "Pessoas",
+       title = "Não Doentes") +
+       theme_classic(base_size = 20, base_family = "mono")
 
-ggarrange(ageCoronary, ageNoncoranary, labels = c("Faixa de idade dos doentes", "Faixa de idade dos não doentes"), nrow = 2)
+ggarrange(ageCoronary, ageNoncoranary, nrow = 2)
 
-#Quantos dos exemplares que desenvolveram a doença possuiam historico familiar
-ggplot(coronary, aes(x=age, fill = famhist)) +    geom_bar() +
-  scale_x_binned() + labs(title = "Plot de doença coronária") +
-  xlab("Idade") + ylab("Quantidade de pessoas") 
-
-# Faixa de idade que tiveram doença coronaria tendo histórico familiar
-histPlot <- ggplot(coronary, aes(x=age, fill = famhist)) + geom_bar() +
-  scale_x_binned()  +
-  xlab("Idade") + ylab("Quantidade de pessoas") 
+#Comparando as principais comorbidades ### Todo fazer um geompoint
 
 
 # tranformando "Present" e "Absent" em dados númericos
@@ -108,6 +121,7 @@ data_mt <- new_df[-9]
 data_mt <- melt(new_df, id.vars = c("chd"))
 data_mt$chd <- replace(data_mt$chd, data_mt$chd == 1, "Doente")
 data_mt$chd <- replace(data_mt$chd, data_mt$chd == 0, "Não doente")
+
 ggplot(data_mt, aes(x=chd,y=value,fill=chd)) +
   geom_boxplot() +
   facet_wrap(~variable)
