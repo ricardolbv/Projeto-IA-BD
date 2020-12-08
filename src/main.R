@@ -76,8 +76,29 @@ ageNoncoranary <- ggplot(nonCoronary, aes(x=age, fill=famhist)) +
 
 ggarrange(ageCoronary, ageNoncoranary, nrow = 2)
 
-#Comparando as principais comorbidades ### Todo fazer um geompoint
+#Comparando as principais comorbidades x idade: tobacco, adiposity and alcohol
+comorbity <- data
+comorbity$chd <- replace(comorbity$chd, comorbity$chd == 1, "Doente")
+comorbity$chd <- replace(comorbity$chd, comorbity$chd == 0, "Não doente")
 
+cmb_adiposity <- ggplot(comorbity, aes(x=age, y=adiposity, color = chd)) +
+  geom_point(size = 4) +
+  theme_bw(base_size = 20, base_family = "mono")
+
+cmb_tobacco <- ggplot(comorbity, aes(x=age, y=tobacco, color = chd)) +
+  geom_point(size = 4) +
+  theme_bw(base_size = 20, base_family = "mono")
+
+cmb_alcohol <- ggplot(comorbity, aes(x=age, y=alcohol, color = chd)) +
+  geom_point(size = 4) +
+  theme_bw(base_size = 20, base_family = "mono")
+
+cmb_obesity <- ggplot(comorbity, aes(x=age, y=obesity, color = chd)) +
+  geom_point(size = 4) +
+  theme_bw(base_size = 20, base_family = "mono")
+
+#Agrupando comparações
+ggarrange(cmb_obesity, cmb_alcohol, cmb_tobacco, cmb_adiposity, nrow = 2, ncol = 2)
 
 # tranformando "Present" e "Absent" em dados númericos
 data$famhist <- replace(data$famhist, data$famhist == "Present", "1") # Atribuindo Present com 1
