@@ -82,23 +82,27 @@ comorbity$chd <- replace(comorbity$chd, comorbity$chd == 1, "Doente")
 comorbity$chd <- replace(comorbity$chd, comorbity$chd == 0, "Não doente")
 
 cmb_adiposity <- ggplot(comorbity, aes(x=age, y=adiposity, color = chd)) +
-  geom_point(size = 4) +
-  theme_bw(base_size = 20, base_family = "mono")
+  geom_point(size = 4, show.legend = FALSE) +
+  theme_classic2(base_size = 20, base_family = "mono")+
+  labs(x = "Idade", y = "Adiposidade localizada")
 
 cmb_tobacco <- ggplot(comorbity, aes(x=age, y=tobacco, color = chd)) +
   geom_point(size = 4) +
-  theme_bw(base_size = 20, base_family = "mono")
+  theme_classic2(base_size = 20, base_family = "mono")+
+  labs(color = "Classificação", x = "Idade", y = "tabaco cumulativo(kg)")
 
 cmb_alcohol <- ggplot(comorbity, aes(x=age, y=alcohol, color = chd)) +
   geom_point(size = 4) +
-  theme_bw(base_size = 20, base_family = "mono")
+  theme_classic2(base_size = 20, base_family = "mono") +
+  labs(color = "Classificação", x = "Idade", y = "Consumo de álcool")
 
 cmb_obesity <- ggplot(comorbity, aes(x=age, y=obesity, color = chd)) +
-  geom_point(size = 4) +
-  theme_bw(base_size = 20, base_family = "mono")
+  geom_point(size = 4, show.legend = FALSE) +
+  theme_classic2(base_size = 20, base_family = "mono") +
+  labs(x = "Idade", y = "Obesidade")
 
 #Agrupando comparações
-ggarrange(cmb_obesity, cmb_alcohol, cmb_tobacco, cmb_adiposity, nrow = 2, ncol = 2)
+ggarrange(cmb_obesity, cmb_alcohol, cmb_adiposity, cmb_tobacco, nrow = 2, ncol = 2, common.legend = TRUE, legend = "top")
 
 # tranformando "Present" e "Absent" em dados númericos
 data$famhist <- replace(data$famhist, data$famhist == "Present", "1") # Atribuindo Present com 1
@@ -119,7 +123,9 @@ coronary = filter(data, chd == 1)
 nonCoronary = filter(data, chd == 0)
 
 #Comparativo de todas 
-plot(data, col = chd)
+plot(data, col = chd) +
+  theme_classic2(base_size = 20, base_family = "mono") +
+  labs(x = "Idade", y = "Obesidade")
 
 
 # separação e armazenamento das features chd e famhist
@@ -145,7 +151,9 @@ data_mt$chd <- replace(data_mt$chd, data_mt$chd == 0, "Não doente")
 
 ggplot(data_mt, aes(x=chd,y=value,fill=chd)) +
   geom_boxplot() +
-  facet_wrap(~variable)
+  facet_wrap(~variable)+ 
+  theme_classic2(base_size = 20, base_family = "mono")+
+  labs(title = "Boxplot: Features normalizadas",fill = "Classificação", x= element_blank(), y = element_blank())
 
 
 # ------------------------------------------2 parte - IA --------------------------------------------------------
