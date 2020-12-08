@@ -101,8 +101,15 @@ cmb_obesity <- ggplot(comorbity, aes(x=age, y=obesity, color = chd)) +
   theme_classic2(base_size = 20, base_family = "mono") +
   labs(x = "Idade", y = "Obesidade")
 
+
 #Agrupando comparações
 ggarrange(cmb_obesity, cmb_alcohol, cmb_adiposity, cmb_tobacco, nrow = 2, ncol = 2, common.legend = TRUE, legend = "top")
+
+#Analisando a comorbidade mental
+ggplot(comorbity, aes(x=age, y=typea, color = chd)) +
+  geom_point(size = 5) +
+  theme_classic2(base_size = 20, base_family = "mono") +
+  labs(x = "Idade", y = "typea", title = "Comorbidade mental x idade", color = "Classificação")
 
 # tranformando "Present" e "Absent" em dados númericos
 data$famhist <- replace(data$famhist, data$famhist == "Present", "1") # Atribuindo Present com 1
